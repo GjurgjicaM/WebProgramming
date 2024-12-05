@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/e59232f0a1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <header class="text-center mb-5">
+        <h1 class="display-4 font-weight-bold">Event Booking Portal</h1>
+    </header>
+
+    <main>
+        <div th:if="${hasError}" class="alert alert-danger text-center" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form th:action="@{/events/search}" th:method="POST" class="form-inline">
+                    <input type="search" name="search" class="form-control mr-2" placeholder="Search events..." required>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form th:action="@{/events/searchByCategory}" th:method="POST" class="form-inline">
+                    <select id="searchByCategory" name="searchByCategory" class="form-control mr-2">
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.category}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-secondary">Filter by Category</button>
+                </form>
+            </div>
+        </div>
+
+        <section>
+            <div class="card p-4 mb-5 shadow">
+                <h3 class="mb-4">Make a Booking</h3>
+                <form th:action="@{/eventBooking/book}" th:method="POST">
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <input type="text" class="form-control" name="attName" placeholder="Your Name" required>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="numTickets" name="numTickets" min="1" max="100" placeholder="Number of Tickets" required>
+                        </div>
+                    </div>
+
+                    <h4 class="mb-3">Select an Event</h4>
+                    <div class="list-group mb-3">
+                        <div th:each="event : ${events}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <input type="radio" name="idEvent" th:value="${event.id}" required>
+                                        <span th:text="${event.name}"></span>
+                                    </h5>
+                                    <small class="text-muted">
+                                        <strong>Location:</strong> <span th:text="${event.getLocation().getAddress()}"></span> |
+                                        <strong>Category:</strong> <span th:text="${event.getCategory().category}"></span>
+                                    </small>
+                                    <p class="mb-1" th:text="${event.description}"></p>
+                                    <p><strong>Remaining Tickets:</strong> <span th:text="${event.numTickets}"></span></p>
+                                </div>
+                                <small th:text="${event.popularityScore} + ' ★'"></small>
+                            </div>
+                            <div class="text-right mt-2">
+                                <a th:href="@{'/events/edit-form/{id}' (id=${event.getId()})}" class="btn btn-info btn-sm mr-2">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+                                <a th:href="@{'/events/delete/{id}' (id=${event.getId()})}" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Delete
+                                </a>
+                                <a th:href="@{'/events/review-form/{id}' (id=${event.getId()})}" class="btn btn-primary btn-sm mr-2">
+                                    <i class="fa fa-comment"></i> Review
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">Confirm Booking</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <div class="text-center mt-4">
+            <a href="/events/add-form" class="btn btn-dark btn-lg">
+                <i class="fa fa-plus"></i> Add New Event
+            </a>
+        </div>
+    </main>
+</div>
+</body>
+</html>
