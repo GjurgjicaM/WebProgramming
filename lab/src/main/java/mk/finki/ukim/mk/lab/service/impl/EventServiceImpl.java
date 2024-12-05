@@ -57,10 +57,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void save(String name, String description, double popularityScore, Long categoryId, Long locationId, int numTickets) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId));
-        Location location = locationRepository.findById(locationId).orElseThrow(() -> new LocationNotFoundException(locationId));
-        this.eventRepository.save(new Event(name, description, popularityScore, category.getId(), location.getId(), numTickets));
+    public void save(Event event) {
+        this.eventRepository.save(event);
     }
 
     @Override

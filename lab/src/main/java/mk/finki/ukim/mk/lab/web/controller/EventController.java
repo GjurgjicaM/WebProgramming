@@ -5,6 +5,7 @@ import mk.finki.ukim.mk.lab.model.Event;
 import mk.finki.ukim.mk.lab.model.Location;
 import mk.finki.ukim.mk.lab.model.exceptions.CategoryNotFoundException;
 import mk.finki.ukim.mk.lab.model.exceptions.LocationNotFoundException;
+import mk.finki.ukim.mk.lab.repository.jpa.CategoryRepository;
 import mk.finki.ukim.mk.lab.service.CategoryService;
 import mk.finki.ukim.mk.lab.service.EventService;
 import mk.finki.ukim.mk.lab.service.LocationService;
@@ -23,7 +24,7 @@ public class EventController {
     private final LocationService locationService;
     private final CategoryService categoryService;
 
-    public EventController(EventService eventService, LocationService locationService, CategoryService categoryService) {
+    public EventController(EventService eventService, LocationService locationService, CategoryService categoryService, CategoryRepository categoryRepository) {
         this.eventService = eventService;
         this.locationService = locationService;
         this.categoryService = categoryService;
@@ -54,7 +55,6 @@ public class EventController {
         List<Category> categories = categoryService.findAll();
         model.addAttribute("locations", locations);
         model.addAttribute("categories", categories);
-        model.addAttribute("event", new Event());
         return "add-event";
     }
 
@@ -63,9 +63,10 @@ public class EventController {
                             @RequestParam String description,
                             @RequestParam Long categoryId,
                             @RequestParam double popularityScore,
-                            @RequestParam Long locationId,
-                            @RequestParam int numTickets) {
-        this.eventService.save(name, description, popularityScore, categoryId, locationId, numTickets);
+                            @RequestParam Long locationId) {
+
+        Event event = new Event(name, description, popularityScore, categoryService.findById(categoryId).get(), locationService.findById(locationId).get(), 100);
+        this.eventService.save(event);
         return "redirect:/events";
     }
 
@@ -97,7 +98,7 @@ public class EventController {
             event.setPopularityScore(popularityScore);
             event.setLocation(this.locationService.findById(locationId).stream().findFirst().get());
             event.setCategory(this.categoryService.findById(categoryId).stream().findFirst().get());
-//            eventService.save(event);
+            eventService.save(event);
         }
         return "redirect:/events";
     }
@@ -121,7 +122,7 @@ public class EventController {
     public String getSearchedByCategoryEvents(@RequestParam Long searchByCategory) {
         if (categoryService.findById(searchByCategory).isPresent()) {
             Category category = categoryService.findById(searchByCategory).get();
-            return "redirect:/events?searchByCategory=" + category.getCategory();
+            return "redirect:/events?searchByCategory=" + searchByCategory;
         }
         return "redirect:/events";
     }

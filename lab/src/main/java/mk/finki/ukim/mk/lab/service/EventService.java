@@ -21,7 +21,7 @@ public interface EventService {
 
     List<Event> findByCategory(Long categoryId);
 
-    void save(String name, String description, double popularityScore, Long categoryId, Long locationId, int numTickets);
+    void save(Event event);
 
     void deleteById(Long id);
 
