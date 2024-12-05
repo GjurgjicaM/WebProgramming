@@ -19,5 +19,7 @@ public class Category {
     private Long id;
     private String category;
 
-
+    public Category(String category) {
+        this.category = category;
+    }
 }

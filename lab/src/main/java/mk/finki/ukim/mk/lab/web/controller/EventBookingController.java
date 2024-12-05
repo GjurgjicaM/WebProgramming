@@ -36,8 +36,8 @@ public class EventBookingController {
         if ((event.getNumTickets() - numTickets<0)){
             return "redirect:/events";
         }
-        event.setNumTickets((int) (event.getNumTickets()-numTickets));
-        this.eventBookingService.placeBooking(event.getName(), attName, request.getRemoteAddr(), numTickets);
+        event.setNumTickets((event.getNumTickets()-numTickets));
+        eventBookingService.placeBooking(event.getName(), attName, request.getRemoteAddr(), numTickets);
         request.getSession().setAttribute("myBookings", this.eventBookingService.listAll());
         return "redirect:/eventBooking";
     }

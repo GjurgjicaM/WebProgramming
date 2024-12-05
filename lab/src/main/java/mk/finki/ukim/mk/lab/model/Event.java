@@ -30,10 +30,14 @@ public class Event {
 
     private int numTickets;
 
-
-    public Event(String name, String description, double popularityScore, Long categoryId, Long locationId, int numTickets) {
+    public Event(String name, String description, double popularityScore, Category category, Location location, int i) {
+        this.name = name;
+        this.description = description;
+        this.popularityScore = popularityScore;
+        this.category = category;
+        this.location=location;
+        this.numTickets=i;
     }
-
 }
 
 //    Изменете ја класата Event во пакетот mk.ukim.finki.wp.lab.model:
